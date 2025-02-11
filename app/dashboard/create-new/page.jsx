@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { VideoDataContext } from "@/app/_context/VideoDataContext";
 import { useUser } from "@clerk/nextjs";
 import PlayerDialog from "../_component/PlayerDialog";
-
+import { UserDetailContext } from "@/app/_context/UserDetailContext";
 
 const CreateNew = () => {
   const [formData, setFormData] = useState([]);
@@ -21,8 +21,9 @@ const CreateNew = () => {
   const [imageList, setImageList] = useState();
   const [playVideo, setPlayVideo] = useState(false);
   const [videoId, setVideoId] = useState();
-  
+
   const { videoData, setVideoData } = useContext(VideoDataContext);
+  const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const { user } = useUser();
   const onHandleInputChange = (fieldName, fieldValue) => {
     console.log(fieldName, fieldValue);
@@ -34,10 +35,12 @@ const CreateNew = () => {
   };
 
   const onCreateClickHandler = () => {
+    if (!userDetail?.credits >= 0) 
+    {
+      toast("You Don't Have Enough Credits")
+      return;
+    }
     GetVideoScript();
-    // GenerateAudioFile(scriptData);
-    // GenerateAudioCaption(FILEURL);
-    // GenerateImage();
   };
 
   // Get Video Script
@@ -147,8 +150,8 @@ const CreateNew = () => {
       })
       .returning({ id: videoData?.id });
 
-      setVideoId(result[0].id);
-      setPlayVideo(true);
+    setVideoId(result[0].id);
+    setPlayVideo(true);
     console.log(result);
     setLoading(false);
   };

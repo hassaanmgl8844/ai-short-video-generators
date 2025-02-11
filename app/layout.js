@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import Provider from "./provider";
 import {Outfit} from 'next/font/google'
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "Next.js",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={outfit.className}>
           <Provider>{children}</Provider>
+          <Toaster />          
         </body>
       </html>
     </ClerkProvider>
