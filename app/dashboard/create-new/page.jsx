@@ -11,6 +11,9 @@ import { VideoDataContext } from "@/app/_context/VideoDataContext";
 import { useUser } from "@clerk/nextjs";
 import PlayerDialog from "../_component/PlayerDialog";
 import { UserDetailContext } from "@/app/_context/UserDetailContext";
+import { db } from "@/configs/db";
+import { Users } from "lucide-react";
+import { eq } from "drizzle-orm";
 
 const CreateNew = () => {
   const [formData, setFormData] = useState([]);
@@ -35,9 +38,8 @@ const CreateNew = () => {
   };
 
   const onCreateClickHandler = () => {
-    if (!userDetail?.credits >= 0) 
-    {
-      toast("You Don't Have Enough Credits")
+    if (!userDetail?.credits >= 0) {
+      toast("You Don't Have Enough Credits");
       return;
     }
     GetVideoScript();
@@ -150,10 +152,26 @@ const CreateNew = () => {
       })
       .returning({ id: videoData?.id });
 
+    await UpdateUserCredits();
     setVideoId(result[0].id);
     setPlayVideo(true);
     console.log(result);
     setLoading(false);
+  };
+
+  const UpdateUserCredits = async () => {
+    const result = await db
+      .update(Users)
+      .set({
+        credits: userDetail?.credits - 10,
+      })
+      .where(eq(Users?.email, user?.primaryEmailAddress?.emailAddress));
+      console.log(result);
+      setUserDetail(prev=>({
+        ...prev,
+        "credits": userDetail?.credits-10,
+      }))
+      
   };
 
   return (
