@@ -159,6 +159,7 @@ const CreateNew = () => {
     setLoading(false);
   };
 
+  // Used to Update User Credits After Video Creation
   const UpdateUserCredits = async () => {
     const result = await db
       .update(Users)
@@ -171,7 +172,7 @@ const CreateNew = () => {
         ...prev,
         "credits": userDetail?.credits-10,
       }))
-      
+        setVideoData(null);
   };
 
   return (
